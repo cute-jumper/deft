@@ -1,0 +1,18 @@
+* Deft
+Yet another fork of git://jblevins.org/git/deft.git. Make slight
+modification myself in order to meet my own needs, though. :)
+
+** How to use
+See http://jblevins.org/projects/deft/ .
+
+** What I modified
+Deft *only* search files ended with the extension in the
+`deft-directory', not recursively. It might work very well in the
+author's situation. However, my knowledge base is organized by both
+the structure of directories and files. Therefore, what I did was to
+modify the function that list all files in the deft buffer to make it
+search the directory recursively. To be specific, its name is
+`deft-find-all-file'. 
+
+That's all. Hmm, Quite small modification~
+

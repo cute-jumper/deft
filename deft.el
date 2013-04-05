@@ -26,7 +26,7 @@
 ;; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;; POSSIBILITY OF SUCH DAMAGE.
 
-;;; Version: 0.5.1
+;; Version: 20130322.1546
 ;;; Author: Jason R. Blevins <jrblevin@sdf.org>
 ;;; Keywords: plain text, notes, Simplenote, Notational Velocity
 ;;; URL: http://jblevins.org/projects/deft/
@@ -538,19 +538,25 @@ It is important to note that the return value is a list of
 absolute filenames.  These absolute filenames are used as keys
 for the various hash tables used for storing file metadata and
 contents.  So, any functions looking up values in these hash
-tables should use `expand-file-name' on filenames first."
-  (if (file-exists-p deft-directory)
-      (let (files result)
-        ;; List all files
-        (setq files
-              (directory-files deft-directory t
-                               (concat "\." deft-extension "$") t))
-        ;; Filter out files that are not readable or are directories
-        (dolist (file files)
-          (when (and (file-readable-p file)
-                     (not (file-directory-p file)))
-            (setq result (cons file result))))
-        result)))
+tables should use `expand-file-name' on filenames first.
+
+Modified by: qjp-ch-mail@163.com
+Date: <2013-04-05 Fri>
+Recursively search the directory in order to meet my own needs.
+:)"
+  (defun find-all-file-recursive (current-directory)
+    (if (file-exists-p current-directory)
+        (let (files result)
+          ;; List all files
+          (setq files
+                (directory-files current-directory t nil t))
+          ;; Filter out files that are not readable or are directories
+          ;; *Update*: only filter out not readable or hidden files
+          (dolist (file files)
+            (cond ((and (file-readable-p file) (not (file-directory-p file)) (string-match-p (concat "\." deft-extension "$") file)) (setq result (cons file result)))
+                  ((and (file-directory-p file) (not (string-match "/\\." file))) (setq result (append (find-all-file-recursive file) result))))) ;; TODO: improve this line
+          result)))
+  (find-all-file-recursive deft-directory))
 
 (defun deft-strip-title (title)
   "Remove all strings matching `deft-strip-title-regexp' from TITLE."
